@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+
+  "name": "RedditChat",
+  "description": "Chat with other users in real-time on Reddit.com",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_title": "RedditChat - real-time chat for Reddit!",
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "https://www.reddit.com/*",
+    "http://www.reddit.com/*",
+    "tabs",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://www.reddit.com/*"],
+      "js": ["socketio.js","insto.js","jquery.js","bootstrap.min.js","redditchat.js"],
+      "css": ["bootstrap.min.css", "redditchat.css"]
+    }
+  ]
+}
