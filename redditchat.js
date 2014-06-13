@@ -138,10 +138,10 @@ var renderMsg = function(data) {
   body.appendTo(li);
 
   var header = $("<div />", {class: "header"});
-  header.html('<strong class="primary-font">'+data.username+'</strong>');
+  header.html('<strong class="primary-font"><a target="_blank" href="/user/'+data.username+'/">'+data.username+'</a></strong>');
   header.appendTo(body);
 
-  var text = $("<p />").text(data.msg);
+  var text = $("<p />").html(urlify(data.msg));
   text.appendTo(body);
 
   li.appendTo(chatwindow);
@@ -150,6 +150,15 @@ var renderMsg = function(data) {
   var height = chatcontainer[0].scrollHeight;
   chatcontainer.scrollTop(height);
 
+}
+
+function urlify(text) {
+  var urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, function(url) {
+      return '<a target="_blank" href="' + url + '">' + url + '</a>';
+  })
+  // or alternatively
+  // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 
 /**************
