@@ -3,7 +3,7 @@
 
   "name": "RedditChat",
   "description": "Chat with other users in real-time on Reddit.com",
-  "version": "1.0",
+  "version": "0.0.1",
 
   "browser_action": {
     "default_title": "RedditChat - real-time chat for Reddit!",
