@@ -14,7 +14,8 @@
     "https://www.reddit.com/*",
     "http://www.reddit.com/*",
     "tabs",
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "content_scripts": [
     {
@@ -22,5 +23,6 @@
       "js": ["socketio.js","insto.js","jquery.js","bootstrap.min.js","redditchat.js"],
       "css": ["bootstrap.min.css", "redditchat.css"]
     }
-  ]
+  ],
+  "web_accessible_resources": ["icon.png", "glyphicons-halflings-regular.*"]
 }

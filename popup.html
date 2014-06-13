@@ -2,32 +2,46 @@
 <html>
   <head>
     <title>RedditChat</title>
-    <style>
-      body {
-        min-width: 357px;
-        overflow-x: hidden;
-      }
-
-      img {
-        margin: 5px;
-        border: 2px solid black;
-        vertical-align: middle;
-        width: 75px;
-        height: 75px;
-      }
-    </style>
-
-    <!--
-      - JavaScript and HTML must be in separate files: see our Content Security
-      - Policy documentation[1] for details and explanation.
-      -
-      - [1]: http://developer.chrome.com/extensions/contentSecurityPolicy.html
-     -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="popup.css" rel="stylesheet">
   </head>
   <body>
   
-    <h1>RedditChat</h1>
-    <p>Nothing to see here yet.</p>
+    <div class="container">
+      
+      <div class="row">
+        
+        <div class="col-md-12">
+          
+          <h1>RedditChat</h1>
+
+          <p>Adding real-time chat to Reddit.com</p>
+          <p><a href="mailto:matt@strikesandgutters.com" target="_blank">Developer Email</a></p>
+
+          <!-- <div class="input-group">
+            <span class="input-group-addon">/r/</span>
+            <input type='text' class="form-control" name="subreddit" id="subreddit" />
+          </div>
+          <button type="button" class="btn btn-primary mt10 btn-block" id="btn-save">Block Subreddit</button>
+          -->
+        </div>
+
+        <!--
+        <div class="col-md-12 mt10">
+          
+          <ul id="subreddits" class="list-group">
+            
+          </ul>
+
+        </div>
+        -->
+      </div>
+
+    </div>
+    
+    <script src="jquery.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="popup.js"></script>
 
   </body>
 </html>

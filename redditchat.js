@@ -1,8 +1,49 @@
 /**************
+  GLOBAL
+**************/
+
+var extension_id = chrome.runtime.id;
+var _users = {}
+
+/**************
   FUNCTIONS
 **************/
 
-var renderChat = function() {
+var calculateConnectedUsers = function(id, direction) {
+  
+  if (direction == "out" && id) {
+    if (_users[id]) {
+      delete _users[id];
+    }
+  } else if (direction == "in" && id) {
+    _users[id] = true;
+  }
+
+  return Object.keys(_users).length;
+  
+}
+
+var getImagePath = function(img) {
+
+  return "chrome-extension://"+extension_id+"/"+img;
+
+}
+
+var minimise = function() {
+
+  $('#redditchat-minimise,#redditchatcontainer_,#redditchatfooter_').addClass("hidden");
+  $('#redditchat-maximise').removeClass("hidden");
+
+}
+
+var maximise = function() {
+
+  $('#redditchat-minimise,#redditchatcontainer_,#redditchatfooter_').removeClass("hidden");
+  $('#redditchat-maximise').addClass("hidden");
+
+}
+
+var renderChat = function(users) {
 
   // create our panel
   var panel = $("<div />", {class: "col-md-3 panel panel-primary chatfix"});
@@ -11,7 +52,19 @@ var renderChat = function() {
   
   // heading
   var heading = $("<div />", {class: "panel-heading"});
-  heading.append("<h2 class='chathead'>Chat</h2>");  
+  var min = $("<button />", {id: "redditchat-minimise", class: "btn btn-default btn-xs pull-right"}).html('<span class="glyphicon glyphicon-chevron-down"></span>');
+  min.click(function(e) {
+    minimise();
+  });
+  min.appendTo(heading);
+  var max = $("<button />", {id: "redditchat-maximise", class: "btn btn-default btn-xs pull-right"}).html('<span class="glyphicon glyphicon-chevron-up"></span>');
+  max.click(function(e) {
+    maximise();
+  });
+  max.appendTo(heading);
+
+  heading.append("<h2 class='chathead'><span class='glyphicon glyphicon-comment'></span> RedditChat (<span id='redditchatusers_'>"+users+"</span> people chatting)</h2>");
+
   heading.appendTo(panel);
 
   // body
@@ -21,7 +74,7 @@ var renderChat = function() {
   body.appendTo(panel);
 
   // footer
-  var footer = $("<div />", {class: "panel-footer"});
+  var footer = $("<div />", {class: "panel-footer", id: "redditchatfooter_"});
   footer.appendTo(panel);
   var inputgroup = $("<div />", {class: "input-group"});
   inputgroup.appendTo(footer);
@@ -42,6 +95,18 @@ var renderChat = function() {
 
   btn.appendTo(inputgroupbtn);
 
+  // only us? then minimise
+  if (users == 1) {
+    min.addClass("hidden");
+    body.addClass("hidden");
+    footer.addClass("hidden");
+  }
+
+  // otherwise, maximise
+  else {
+    max.addClass("hidden");
+  }
+
   // add to main page
   $("body").append(panel)
 
@@ -56,7 +121,7 @@ var sendMsg = function() {
 
     insto.send({thread: thread}, {msg: msg, username: username}, true)
 
-    $('#input-redditchat').val("")
+    $('#input-redditchat').val("");
 
   }
 
@@ -105,17 +170,9 @@ var thread = (window.location.href.split("/")[6]?window.location.href.split("/")
 // if don't have a user
 // or we don't have a thread
 // then we aren't gonna show the chat window
+// but if we do...!
 
-if (!username || !thread) {
-
-  console.log("no chat");
-
-}
-
-// otherwise, we want to connect to Insto
-// and setup our users etc...
-
-else {
+if (username && thread) {
 
   // user data
   var userData = {
@@ -131,14 +188,38 @@ else {
   //connect to insto
   var insto = new InstoClient('467c4957eb36428b25745e053c757521', userData, userQuery, {
     
+    onConnect: function(data) {
+
+      calculateConnectedUsers(data._id, "in");
+
+    },
+
     // what happens when we connect?
-    onConnect: function(data) { 
-      renderChat();
+    onConnectedUsers: function(data) { 
+
+      renderChat(data.users.length + 1);
+
+      for (var u in data.users) {
+        $('#redditchatusers_').html(calculateConnectedUsers(data.users[u]._id, "in"));
+      }     
+
     },
 
     // handle incoming messages
     onNotification: function(data) { 
       renderMsg(data);
+    },
+
+    onUserConnect: function(data) {
+
+      $('#redditchatusers_').html(calculateConnectedUsers(data._id, "in"));
+
+    },
+
+    onUserDisconnect: function(data) {
+
+      $('#redditchatusers_').html(calculateConnectedUsers(data._id, "out"));
+
     }
     
   });
